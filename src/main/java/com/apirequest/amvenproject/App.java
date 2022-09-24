@@ -12,7 +12,7 @@ public class App
     public static void main( String[] args )
     {
     	
-    	venReg();
+    	granjitaAnularTicket();
 		
     }
     
@@ -32,7 +32,7 @@ public class App
 			
 			System.out.println(mensaje[0]);
 		} catch (UnirestException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
@@ -59,7 +59,6 @@ public class App
 						  .body("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\r\n  <soap12:Body>\r\n    <VenReg xmlns=\"http://app.maticlot.com/\">\r\n      <CodVal>"+CodVal+"</CodVal>\r\n      <CodCom>"+codCom+"</CodCom>\r\n      <CodAge>"+codAge+"</CodAge>\r\n      <idTic>"+idTic+"</idTic>\r\n      <idMon>"+idMon+"</idMon>\r\n      <Jugada>\r\n      <![CDATA["+Jugada+"]]></Jugada>\r\n    </VenReg>\r\n  </soap12:Body>\r\n</soap12:Envelope>")
 						  .asString();
 			} catch (UnirestException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			String[] mensaje=response.getBody().split("<VenRegResult>");
@@ -85,8 +84,74 @@ public class App
 			
 			System.out.println(mensaje[0]);
 		} catch (UnirestException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
+
+	public static void granjitaLogin(){
+		String usuario="TAQ_LOTIPLAY_VES";
+		String password="48cp?qNxxstiPFGDgnd&";
+		String serial="syam123456";
+		try {
+			HttpResponse<String> response =  Unirest.post("http://dev.premierpluss.com:2053/users/token-v2/"+serial)
+			  .header("Content-Type", "application/json")
+			  .body("{\"username\": \""+usuario+"\",\"password\": \""+password+"\",\"device_info\": {\"system_name\": \"syam\",\"app_name\": \"INTEGRATION\",\"app_version\": \"2\"}}")
+			  .asString();
+			String mensaje=response.getBody();
+			System.out.println(mensaje);
+		}catch(UnirestException e){
+			e.printStackTrace();
+		}
+
+	}
+	public static void granjitaGetRes(){
+		String token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjk5NzMsImV4cCI6MTY2NDEwMTgyM30.y3-ycKSnPVJ7fM6yuWxy-RNF0I0sXqoOp_y9T5Htjcs";
+		try {
+			HttpResponse<String> response =  Unirest.post("http://dev.premierpluss.com:2053/loteries/get-sorteos-v2")
+			  .header("Content-Type", "application/json")
+			  .header("Authorization", "Bearer "+token)
+			  .asString();
+			String mensaje=response.getBody();
+			System.out.println(mensaje);
+		}catch(UnirestException e){
+			e.printStackTrace();
+		}
+
+	}
+
+
+	public static void granjitaSendTicket(){
+		String numero="0";
+		int loteria=9;
+		String token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjk5NzMsImV4cCI6MTY2NDEwMTgyM30.y3-ycKSnPVJ7fM6yuWxy-RNF0I0sXqoOp_y9T5Htjcs";
+		double monto=0.5;
+		try {
+			HttpResponse<String> response =  Unirest.post("http://dev.premierpluss.com:2053/tickets/add-v2")
+			  .header("Content-Type", "application/json")
+			  .header("Authorization", "Bearer "+token)
+			  .body("{\"bets\": [{\"number\": \""+numero+"\",\"lotery_id\":"+loteria+",\"amount\": "+monto+"}]}")
+			  .asString();
+			String mensaje=response.getBody();
+			System.out.println(mensaje);
+		}catch(UnirestException e){
+			e.printStackTrace();
+		}
+
+	}
+	public static void granjitaAnularTicket(){
+		int numero=10214334;
+		String token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjk5NzMsImV4cCI6MTY2NDEwMTgyM30.y3-ycKSnPVJ7fM6yuWxy-RNF0I0sXqoOp_y9T5Htjcs";
+		try {
+			HttpResponse<String> response =  Unirest.post("http://dev.premierpluss.com:2053/tickets/anull-v2")
+			  .header("Content-Type", "application/json")
+			  .header("Authorization", "Bearer "+token)
+			  .body("{\"number\": "+numero+"}")
+			  .asString();
+			String mensaje=response.getBody();
+			System.out.println(mensaje);
+		}catch(UnirestException e){
+			e.printStackTrace();
+		}
+
+	}
 }
